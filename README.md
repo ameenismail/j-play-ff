@@ -1,3 +1,9 @@
+j-play-ff
+======
+This is my attempt to modify the Chrome extension J-Play to port it to Firefox.
+
+Below is the README for the original J-Play.
+
 j-play
 ======
 
