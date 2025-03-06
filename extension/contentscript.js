@@ -350,7 +350,14 @@ function createBoard(containing_el, old_el, lowest_value, category_ndx)
             c.style.borderColor = 'black';
             c.value = i * lowest_value;
             c.className = c.value >= 1000 ? 'clue pLaYnum pLaYbignum' : 'clue pLaYnum';
-            c.innerHTML = '<span class="pLaYdollar">$</span>' + c.value;
+	    // edit start
+	    let s = document.createElement('span');
+	    s.setAttribute("class", "pLaYdollar");
+	    s.innerText = '$';
+	    let t = document.createTextNode(c.value);
+	    c.appendChild(s);
+	    c.appendChild(t);
+	    // edit end
             c.onclick = function() { toggleClue(this, this.num, 0); return false; };
         }
     }
@@ -395,7 +402,13 @@ function createFinalJeopardy(containing_el, old_el)
                 c.id = j == 3 ? 'clue_FJ_new' : 'clue_TB_new';
                 c.num = j == 3 ? 61 : 62;
                 c.className = 'clue pLaYfinal';
-                c.innerHTML = j == 3 ? 'FINAL<br><small>JEOPARDY</small>' : 'TIE<br><small>BREAKER</small>';
+		// edit start
+		if (j == 3) {
+		    c.innerHTML = 'FINAL<br><small>JEOPARDY</small>';
+		} else {
+		    c.innerHTML = 'TIE<br><small>BREAKER</small>';
+		}
+		// edit end
                 c.onclick = function() { toggleClue(this, this.num, 0); return false; };
             } else {
                 c.className = 'clue pLaYnum';
@@ -451,9 +464,14 @@ function createScores(containing_el, nicknames)
     tbl_el.id = 'scores_new';
     tbl_el.align = 'center';
 
+    // edit start
+    // nicknames[3] = '\u00a0';
+    // nicknames[4] = 'Combo\r\nCoryat';
+    // nicknames[5] = 'Your\r\nCoryat';
     nicknames[3] = '&nbsp;';
     nicknames[4] = 'Combo<br>Coryat';
     nicknames[5] = 'Your<br>Coryat';
+    // edit end
     contestants['Combo_Coryat'] = { };
     contestants['Your_Coryat'] = { };
 
@@ -507,7 +525,17 @@ function createScores(containing_el, nicknames)
             c.style.textShadow = bigDropShadow;
         } else
             c.style.fontSize = '3em';
-        c.innerHTML = nicknames[j];
+	// edit start
+	if (j < 3) {
+            c.innerText = nicknames[j];
+	} else if (j == 3) {
+	    c.innerHTML = '&nbsp;';
+	} else if (j == 4) {
+	    c.innerHTML = 'Combo<br>Coryat';
+	} else if (j == 5) {
+	    c.innerHTML = 'Your<br>Coryat';
+	}
+	// edit end
     }
     r = tbl_el.insertRow(3);
     for (let j = 0; j < 6; j++) {
@@ -524,18 +552,35 @@ function createScores(containing_el, nicknames)
 function createButtons(containing_el, dj_el, fj_el)
 {
     let div_el = document.createElement('div');
-    let html = '<br><table align="center" valign="middle"><tr><td>'
+    // edit start
+    if (dj_el) {
+	if (fj_el) {
+	    div_el.innerHTML = '<br><table align="center" valign="middle"><tr><td>'
              + '<button id="toggle_btn">Toggle game style</button>'
-             + '<button id="J_btn">Start Jeopardy!</button>';
-    if (dj_el)
-        html += '<button id="DJ_btn">Start Double Jeopardy!</button>';
-    if (fj_el)
-        html += '<button id="FJ_btn">Start Final Jeopardy!</button>';
-    html += '<button id="upper_btn">Toggle uppercase clues</button>';
-    html += '<button id="help_btn">Show/Hide help</button>';
-    html += '</td></tr></table>';
-
-    div_el.innerHTML = html;
+             + '<button id="J_btn">Start Jeopardy!</button>'
+	     + '<button id="DJ_btn">Start Double Jeopardy!</button>'
+	     + '<button id="FJ_btn">Start Final Jeopardy!</button>'
+	     + '<button id="upper_btn">Toggle uppercase clues</button>'
+	     + '<button id="help_btn">Show/Hide help</button>'
+	     + '</td></tr></table>';
+	} else {
+	    div_el.innerHTML = '<br><table align="center" valign="middle"><tr><td>'
+             + '<button id="toggle_btn">Toggle game style</button>'
+             + '<button id="J_btn">Start Jeopardy!</button>'
+	     + '<button id="DJ_btn">Start Double Jeopardy!</button>'
+	     + '<button id="upper_btn">Toggle uppercase clues</button>'
+	     + '<button id="help_btn">Show/Hide help</button>'
+	     + '</td></tr></table>';
+	}
+    } else {
+        div_el.innerHTML = '<br><table align="center" valign="middle"><tr><td>'
+             + '<button id="toggle_btn">Toggle game style</button>'
+             + '<button id="J_btn">Start Jeopardy!</button>'
+	     + '<button id="upper_btn">Toggle uppercase clues</button>'
+	     + '<button id="help_btn">Show/Hide help</button>'
+	     + '</td></tr></table>';
+    }
+    // edit end
 
     containing_el.appendChild(div_el);
 
@@ -980,8 +1025,13 @@ function displayClueScreen(incr)
         clue.done = 1;
     }
 
-    clueDiv.innerHTML = '<table class="pLaYclueTbl"' + font_style + '>'
+    let nodeString = '<table class="pLaYclueTbl"' + font_style + '>'
                       + '<tr align="center"><td valign="middle">' + html + '</td></tr></table>';
+    let tableElement = new DOMParser().parseFromString(nodeString, "text/html").body.firstElementChild;
+    clueDiv.innerHTML = "";
+    clueDiv.appendChild(tableElement);
+    //clueDiv.innerHTML = '<table class="pLaYclueTbl"' + font_style + '>'
+    //                  + '<tr align="center"><td valign="middle">' + html + '</td></tr></table>';
     clueDiv.style.display = 'block';
 }
 
@@ -999,6 +1049,7 @@ function pushTextAndMediaPages(txt)
         clueDiv.cluePages.push(h);
     }
 }
+// edit end
 
 function hideClue()
 {
@@ -1029,7 +1080,10 @@ function adjustOneScore(who, incr, mult, fudge_total=false)
         let score_el = contestants[who].score_el;
         score_el.value += incr;
         score_el.className = score_el.value >= 0 ? 'score_positive' : 'score_negative';
-        score_el.innerHTML = prettyDollars(score_el.value, '$');
+	// edit start
+        score_el.innerText = prettyDollars(score_el.value, '$');
+        // score_el.innerHTML = prettyDollars(score_el.value, '$');
+	// edit end
         if (fudge_total)
             score_el.value -= incr;
     }
@@ -1037,7 +1091,12 @@ function adjustOneScore(who, incr, mult, fudge_total=false)
     let adjust_el = contestants[who].adjust_el;
     if (incr && mult >= 0) {
         let color = incr >= 0 ? 'green' : 'red';
-        adjust_el.innerHTML = '<span style="background-color: ' + color + '">' + prettyDollars(incr, '+') + '</span>';
+	// edit start
+        adjust_el.innerHTML = '&nbsp;';
+	let s = document.createElement('span');
+	s.setAttribute("style", "background-color: " + color);
+	s.innerText = prettyDollars(incr, '+');
+	adjust_el.appendChild(s);
     } else
         adjust_el.innerHTML = '&nbsp;';
 }

@@ -14,5 +14,11 @@
       "run_at": "document_end"
    } ],
    "permissions": [ ],
-   "host_permissions": [ "https://*.j-archive.com/showgame*" ]
+   "host_permissions": [ "https://*.j-archive.com/showgame*" ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{6edbebaa-f5ed-4445-9126-84514628f8eb}"
+    }
+  }
+
 }
